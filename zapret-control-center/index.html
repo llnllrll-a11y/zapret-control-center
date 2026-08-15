@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html data-theme="Modern">
+<head>
+    <meta charset="UTF-8">
+    <title>Zapret Control Center</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="topbar">
+        <button id="btn-change-folder">Change Folder</button>
+        <span id="label-folder-path">C:\zapret</span>
+
+        <div class="autopilot-switch">
+            <label for="autopilot-toggle" title="Periodically checks strategy and switches if quality degrades">Autopilot:</label>
+            <input type="checkbox" id="autopilot-toggle">
+        </div>
+    </div>
+
+    <div id="main-content">
+        <div id="strategies-pane">
+            <h2>Strategies <span id="strategy-count"></span></h2>
+            <div id="strategies-list"></div>
+        </div>
+
+        <div id="right-panel">
+            <button id="btn-run-selected">Run Selected</button>
+            <button id="btn-stop-all" style="color: var(--danger-color); font-weight: bold;">Stop All</button>
+            <button id="btn-install-service">Install as Service</button>
+            <button id="btn-remove-service">Remove Service</button>
+            <hr style="width: 100%; border-color: var(--border-color);">
+            <button id="btn-find-best">Find Best (Auto)</button>
+            <button id="btn-stop-test" disabled>Stop Test</button>
+            <button id="btn-refresh">Refresh List</button>
+            <hr style="width: 100%; border-color: var(--border-color);">
+            <button id="btn-settings">Settings</button>
+            <button id="btn-lists">Lists Editor</button>
+            <button id="btn-diagnostics">Diagnostics</button>
+            <button id="btn-log">Log Viewer</button>
+            <button id="btn-minimize">Minimize to Tray</button>
+        </div>
+    </div>
+
+    <div id="bottombar">
+        <span id="status-indicators">Service: 🔴 | WinWS: 🔴 | Divert: 🔴 | Active: None</span>
+        <div style="display:flex; gap: 10px;">
+            <button id="btn-update-zapret" style="display:none; font-size:11px; padding:2px 5px;">Update Zapret</button>
+            <button id="btn-update-app" style="display:none; font-size:11px; padding:2px 5px;">Update App</button>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-settings" class="modal-overlay">
+        <div class="modal">
+            <span class="modal-close" onclick="closeModal('modal-settings')">&times;</span>
+            <h2>Settings</h2>
+            <div style="margin-bottom: 10px;">
+                <label>Theme: </label>
+                <select id="setting-theme">
+                    <option value="Modern">Modern</option>
+                    <option value="Black">Black (OLED)</option>
+                    <option value="Light">Light</option>
+                    <option value="Fallout">Fallout</option>
+                    <option value="Ocean">Ocean</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <label><input type="checkbox" id="setting-autostart"> Autostart last used on launch</label>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <label><input type="checkbox" id="setting-network-detect"> Silent Auto-find on Network change</label>
+            </div>
+            <h3>Autopilot Settings</h3>
+            <div style="margin-bottom: 10px;">
+                <label>Recheck every (hours): <input type="number" id="setting-ap-hours" min="1" max="24" value="6"></label>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <label>Switch Threshold (Score %): <input type="number" id="setting-ap-threshold" min="0" max="100" value="50"></label>
+            </div>
+            <button onclick="saveSettings()">Save Settings</button>
+        </div>
+    </div>
+
+    <div id="modal-diagnostics" class="modal-overlay">
+        <div class="modal">
+            <span class="modal-close" onclick="closeModal('modal-diagnostics')">&times;</span>
+            <h2>Diagnostics & X-Ray</h2>
+            <div id="diag-content"></div>
+            <button onclick="runDiagnosticsBtn()" style="margin-top:10px;">Run Full Test & Diagnose</button>
+        </div>
+    </div>
+
+    <div id="modal-lists" class="modal-overlay">
+        <div class="modal">
+            <span class="modal-close" onclick="closeModal('modal-lists')">&times;</span>
+            <h2>Lists Editor</h2>
+            <select id="list-selector" onchange="loadList()">
+                <option value="list-general-user.txt">list-general-user.txt</option>
+                <option value="list-exclude-user.txt">list-exclude-user.txt</option>
+                <option value="ipset-exclude-user.txt">ipset-exclude-user.txt</option>
+            </select>
+            <textarea id="list-editor" style="width:100%; height:300px; margin-top:10px; font-family:monospace;"></textarea>
+            <button onclick="saveList()" style="margin-top:10px;">Save List</button>
+        </div>
+    </div>
+
+    <div id="modal-log" class="modal-overlay">
+        <div class="modal">
+            <span class="modal-close" onclick="closeModal('modal-log')">&times;</span>
+            <h2>Log Viewer</h2>
+            <textarea id="log-viewer" style="width:100%; height:300px; margin-top:10px; font-family:monospace;" readonly></textarea>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>
